@@ -156,13 +156,13 @@ async function supabaseRequest(functionName, data = {}) {
 
 async function loadSessionsForDate() {
   const selectedDate = dateInput.value;
-  sessionSelect.innerHTML = '<option value="">Loading sessions...</option>';
+  sessionSelect.innerHTML = '<option value="">Choose a session</option>';
   sessionSelect.disabled = true;
   message.textContent = "";
 
   if (!selectedDate) {
     sessionSelect.innerHTML = '<option value="">Select a date first</option>';
-    availabilityMessage.textContent = "Select a date to view session availability.";
+    availabilityMessage.textContent = "Select a date to view the three regular sessions.";
     sessionSelect.disabled = false;
     return;
   }
@@ -173,21 +173,14 @@ async function loadSessionsForDate() {
     return;
   }
 
-  try {
-    // Requires a Supabase RPC named get_regular_class_sessions(p_class_date date)
-    // returning session_id, label, remaining_slots for the selected date.
-    const sessions = await supabaseRequest("get_regular_class_sessions", {
-      p_class_date: selectedDate
-    });
-    setSessionOptions(sessions);
-    availabilityMessage.textContent = "Maximum 25 bookings per session. Availability is based on the selected date.";
-  } catch (error) {
-    sessionSelect.innerHTML = '<option value="">Availability unavailable</option>';
-    availabilityMessage.textContent = "Session availability is not connected yet. Please contact StepBeat Studio.";
-    console.error("Session loading error:", error);
-  } finally {
-    sessionSelect.disabled = false;
-  }
+  const sessions = SESSION_OPTIONS.map(session => ({
+    session_id: session.id,
+    label: session.label,
+    remaining_slots: 25
+  }));
+  setSessionOptions(sessions);
+  availabilityMessage.textContent = "Three sessions are available to select. Each session has a limit of 25 bookings. Live remaining-slot counts require the Supabase booking functions to be connected.";
+  sessionSelect.disabled = false;
 }
 
 dateInput.addEventListener("change", loadSessionsForDate);
