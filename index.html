@@ -163,6 +163,12 @@ async function supabaseRequest(functionName, data = {}) {
 
 async function loadSessionsForDate() {
   const selectedDate = dateInput.value;
+    if (selectedDate === "2026-10-21" || selectedDate === "2026-10-22") {
+  sessionSelect.innerHTML = '<option value="">No classes available on this date</option>';
+  sessionSelect.disabled = true;
+  availabilityMessage.textContent = "Bookings are closed for this date.";
+  return;
+}
 
   sessionSelect.innerHTML =
     '<option value="">Loading sessions...</option>';
@@ -183,6 +189,14 @@ async function loadSessionsForDate() {
       "get_regular_class_sessions",
       { p_class_date: selectedDate }
     );
+      
+      if (selectedDate === "2026-10-20") {
+  sessions.forEach(session => {
+    if (String(session.session_id) === "3") {
+      session.remaining_slots = 0;
+    }
+  });
+}
 
     setSessionOptions(sessions);
 
