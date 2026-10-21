@@ -127,6 +127,9 @@ const SESSION_OPTIONS = [
 ];
 
 dateInput.min = BOOKING_START_DATE;
+    const maxBookingDate = new Date();
+maxBookingDate.setDate(maxBookingDate.getDate() + 30);
+dateInput.max = maxBookingDate.toISOString().split("T")[0];
 
 function setSessionOptions(sessions) {
   const previous = sessionSelect.value;
