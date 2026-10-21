@@ -197,7 +197,11 @@ async function loadSessionsForDate() {
     }
   });
 }
-
+sessions.forEach(session => {
+  if (String(session.session_id) === "3") {
+    session.label = "7:30-8:30 PM";
+  }
+});
     setSessionOptions(sessions);
 
     availabilityMessage.textContent =
