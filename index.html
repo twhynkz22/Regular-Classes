@@ -320,6 +320,23 @@ function formatDateLocal(date) {
     return `${year}-${month}-${day}`;
 }
 
+```html
+<script>
+const dateInput = document.getElementById("classDate");
+
+const closedDates = [
+    "2026-11-01",
+    "2026-11-02"
+];
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
 function updateBookingDates() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -327,22 +344,43 @@ function updateBookingDates() {
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 6);
 
-    dateInput.min = formatDateLocal(today);
-    dateInput.max = formatDateLocal(maxDate);
+    dateInput.min = formatDate(today);
+    dateInput.max = formatDate(maxDate);
 }
 
-const closedDates = ["2026-11-01", "2026-11-02"];
+function isBookingDateAllowed(dateValue) {
+    if (!dateValue || closedDates.includes(dateValue)) {
+        return false;
+    }
 
-function checkClosedDate() {
-    if (closedDates.includes(dateInput.value)) {
-        alert("CLOSED: StepBeat Studio is closed on November 1 and 2, 2026.");
+    const selectedDate = new Date(dateValue + "T00:00:00");
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 6);
+
+    return selectedDate >= today && selectedDate <= maxDate;
+}
+
+function checkBookingDate() {
+    if (!dateInput.value) return;
+
+    if (!isBookingDateAllowed(dateInput.value)) {
+        if (closedDates.includes(dateInput.value)) {
+            alert("StepBeat Studio is CLOSED on November 1 and 2, 2026. Please select another date.");
+        } else {
+            alert("Bookings are only allowed within the next 7 days.");
+        }
+
         dateInput.value = "";
         dateInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
 }
 
-dateInput.addEventListener("change", checkClosedDate);
-dateInput.addEventListener("input", checkClosedDate);
+dateInput.addEventListener("change", checkBookingDate);
+dateInput.addEventListener("input", checkBookingDate);
 
 updateBookingDates();
 </script>
