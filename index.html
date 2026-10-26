@@ -90,7 +90,7 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
         <br><br>
 
         <label for="classDate">Choose Your Class Date</label><br>
-        <input id="classDate" name="classDate" type="date" min="2026-10-20" required>
+       <input id="classDate" name="classDate" type="date" required>
         <br><br>
 
         <label for="session">Choose Your Session</label><br>
@@ -281,5 +281,35 @@ function escapeHTML(value) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[character]));
 }
+</script>
+<script>
+const dateInput = document.getElementById("classDate");
+
+function updateBookingDates() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 6);
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    dateInput.min = formatDate(today);
+    dateInput.max = formatDate(maxDate);
+}
+
+dateInput.addEventListener("input", function () {
+    if (["2026-11-01", "2026-11-02"].includes(this.value)) {
+        alert("StepBeat Studio is closed on November 1 and 2, 2026. Please select another date.");
+        this.value = "";
+    }
+});
+
+updateBookingDates();
 </script>
 </body></html>
