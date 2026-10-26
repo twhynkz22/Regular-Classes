@@ -298,7 +298,7 @@ function updateBookingDates() {
     today.setHours(0, 0, 0, 0);
 
     const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 6);
+    maxDate.setDate(maxDate.getDate() + 6);
 
     dateInput.min = formatDate(today);
     dateInput.max = formatDate(maxDate);
@@ -307,9 +307,22 @@ function updateBookingDates() {
 dateInput.addEventListener("change", function () {
     const closedDates = ["2026-11-01", "2026-11-02"];
 
-    if (closedDates.includes(this.value)) {
-        alert("StepBeat Studio is closed on November 1 and 2, 2026. Please select another date.");
-        this.value = "";
+    if (closedDates.includes(dateInput.value)) {
+        alert("StepBeat Studio is closed on November 1 and 2, 2026.");
+        dateInput.value = "";
+        return;
+    }
+
+    const selected = new Date(dateInput.value + "T00:00:00");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 6);
+
+    if (selected < today || selected > maxDate) {
+        alert("Bookings are only allowed within the next 7 days.");
+        dateInput.value = "";
     }
 });
 
