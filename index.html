@@ -228,6 +228,25 @@ form.addEventListener("submit", async function(event) {
   const phone = document.getElementById("phone").value.trim();
   const classDate = dateInput.value;
   const sessionId = sessionSelect.value;
+    const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const maxDate = new Date(today);
+maxDate.setDate(maxDate.getDate() + 6);
+
+const selectedDate = new Date(classDate + "T00:00:00");
+
+const closedDates = ["2026-11-01", "2026-11-02"];
+
+if (
+    selectedDate < today ||
+    selectedDate > maxDate ||
+    closedDates.includes(classDate)
+) {
+    message.textContent =
+        "Bookings are limited to the next 7 days. StepBeat Studio is closed on November 1 and 2, 2026. Please choose another date.";
+    return;
+}
 
   if (!fullName || !phone || !classDate || !sessionId) {
     message.textContent = "Please complete your name, contact number, class date, and session.";
