@@ -290,6 +290,7 @@ function escapeHTML(value) {
   }[character]));
 }
 </script>
+```html
 <script>
 const dateInput = document.getElementById("classDate");
 
@@ -314,9 +315,9 @@ function updateBookingDates() {
 dateInput.addEventListener("change", function () {
     const closedDates = ["2026-11-01", "2026-11-02"];
 
-    if (closedDates.includes(dateInput.value)) {
-        alert("CLOSED! StepBeat Studio will be closed on November 1 and 2, 2026. Please select another date.");
-        dateInput.value = "";
+    if (closedDates.includes(this.value)) {
+        alert("StepBeat Studio is closed on November 1 and 2, 2026. Please select another date.");
+        this.value = "";
     }
 });
 
