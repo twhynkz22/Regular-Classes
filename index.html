@@ -303,10 +303,8 @@ function updateBookingDates() {
     dateInput.min = formatDate(today);
     dateInput.max = formatDate(maxDate);
 }
-
 dateInput.addEventListener("change", function () {
     const closedDates = ["2026-11-01", "2026-11-02"];
-
     if (closedDates.includes(dateInput.value)) {
         alert("StepBeat Studio is closed on November 1 and 2, 2026.");
         dateInput.value = "";
