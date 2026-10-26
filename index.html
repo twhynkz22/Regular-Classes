@@ -126,11 +126,7 @@ const SESSION_OPTIONS = [
   { id: "3", label: "7:30–8:30 PM" }
 ];
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-
-const maxBookingDate = new Date(today);
-maxBookingDate.setDate(maxBookingDate.getDate() + 6);
+const closedDates = ["2026-11-01", "2026-11-02"];
 
 function formatDateForInput(date) {
     const year = date.getFullYear();
@@ -139,36 +135,54 @@ function formatDateForInput(date) {
     return `${year}-${month}-${day}`;
 }
 
-dateInput.min = formatDateForInput(today);
-dateInput.max = formatDateForInput(maxBookingDate);
-    
-const closedDates = ["2026-11-01", "2026-11-02"];
-
-dateInput.addEventListener("change", function () {
-    if (closedDates.includes(this.value)) {
-        alert("StepBeat Studio is CLOSED on November 1 and 2, 2026. Please choose another date.");
-        this.value = "";
-        sessionSelect.innerHTML = '<option value="">Choose a session</option>';
-        availabilityMessage.textContent = "Please select another date.";
-    }
-});
-    function isBookingDateAllowed(dateString) {
-    if (!dateString) return false;
-
+function getToday() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    return today;
+}
 
-    const maxDate = new Date(today);
+function getMaxBookingDate() {
+    const maxDate = getToday();
     maxDate.setDate(maxDate.getDate() + 6);
+    return maxDate;
+}
+
+dateInput.min = formatDateForInput(getToday());
+dateInput.max = formatDateForInput(getMaxBookingDate());
+
+function isBookingDateAllowed(dateString) {
+    if (!dateString || closedDates.includes(dateString)) {
+        return false;
+    }
 
     const selectedDate = new Date(dateString + "T00:00:00");
 
     return (
-        selectedDate >= today &&
-        selectedDate <= maxDate &&
-        !closedDates.includes(dateString)
+        selectedDate >= getToday() &&
+        selectedDate <= getMaxBookingDate()
     );
 }
+
+dateInput.addEventListener("change", function () {
+    if (!this.value) return;
+
+    if (!isBookingDateAllowed(this.value)) {
+        const selected = this.value;
+
+        this.value = "";
+        sessionSelect.innerHTML =
+            '<option value="">Choose a session</option>';
+
+        availabilityMessage.textContent =
+            "This date is unavailable. Please choose another date.";
+
+        if (closedDates.includes(selected)) {
+            alert("StepBeat Studio is CLOSED on November 1 and 2, 2026.");
+        } else {
+            alert("Bookings are only allowed within the next 7 days.");
+        }
+    }
+});
 function setSessionOptions(sessions) {
   const previous = sessionSelect.value;
   sessionSelect.innerHTML = '<option value="">Choose a session</option>';
