@@ -227,6 +227,17 @@ form.addEventListener("submit", async function(event) {
   const fullName = document.getElementById("fullName").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const classDate = dateInput.value;
+    if (!isBookingDateAllowed(classDate)) {
+    event.preventDefault();
+
+    alert(
+        closedDates.includes(classDate)
+            ? "StepBeat Studio is CLOSED on November 1 and 2, 2026."
+            : "Bookings are only allowed within the next 7 days."
+    );
+
+    return;
+}
   const sessionId = sessionSelect.value;
     const today = new Date();
 today.setHours(0, 0, 0, 0);
