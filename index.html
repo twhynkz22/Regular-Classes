@@ -314,12 +314,16 @@ function updateBookingDates() {
 
 const closedDates = ["2026-11-01", "2026-11-02"];
 
-dateInput.addEventListener("change", function () {
-    if (closedDates.includes(this.value)) {
-        alert("CLOSED: StepBeat Studio is closed on November 1 and 2, 2026. Please select another date.");
-        this.value = "";
+function checkClosedDate() {
+    if (closedDates.includes(dateInput.value)) {
+        alert("CLOSED: StepBeat Studio is closed on November 1 and 2, 2026.");
+        dateInput.value = "";
+        dateInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
-});
+}
+
+dateInput.addEventListener("change", checkClosedDate);
+dateInput.addEventListener("input", checkClosedDate);
 
 updateBookingDates();
 </script>
