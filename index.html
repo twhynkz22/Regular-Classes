@@ -293,6 +293,14 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
+```javascript
+function formatDateLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
 function updateBookingDates() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -300,27 +308,16 @@ function updateBookingDates() {
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 6);
 
-    dateInput.min = formatDate(today);
-    dateInput.max = formatDate(maxDate);
+    dateInput.min = formatDateLocal(today);
+    dateInput.max = formatDateLocal(maxDate);
 }
+
 const closedDates = ["2026-11-01", "2026-11-02"];
 
-dateInput.addEventListener("input", function () {
+dateInput.addEventListener("change", function () {
     if (closedDates.includes(this.value)) {
-        alert("CLOSED: StepBeat Studio will be closed on November 1 and 2, 2026.");
+        alert("CLOSED: StepBeat Studio is closed on November 1 and 2, 2026. Please select another date.");
         this.value = "";
-    }
-});
-    const selected = new Date(dateInput.value + "T00:00:00");
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const maxDate = new Date(today);
-    maxDate.setDate(maxDate.getDate() + 6);
-
-    if (selected < today || selected > maxDate) {
-        alert("Bookings are only allowed within the next 7 days.");
-        dateInput.value = "";
     }
 });
 
