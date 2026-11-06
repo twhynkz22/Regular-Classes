@@ -237,17 +237,23 @@ const membershipCard = document.getElementById("membershipCard");
 const membershipBooklet = document.getElementById("membershipBooklet");
 
 function updateBookingType() {
-  const isRegular = bookingType.value === "regular";
-  const isMember = ["basic", "premium"].includes(bookingType.value);
+  const selected = bookingType.value;
 
-  gcashPayment.hidden = !isRegular;
-  membershipProof.hidden = !isMember;
+  if (selected === "regular") {
+    gcashPayment.hidden = false;
+    membershipProof.hidden = true;
+  } else if (selected === "basic" || selected === "premium") {
+    gcashPayment.hidden = true;
+    membershipProof.hidden = false;
+  } else {
+    gcashPayment.hidden = true;
+    membershipProof.hidden = true;
+  }
 
-  paymentProof.required = isRegular;
-  membershipCard.required = isMember;
-  membershipBooklet.required = isMember;
+  paymentProof.required = selected === "regular";
+  membershipCard.required = selected === "basic" || selected === "premium";
+  membershipBooklet.required = selected === "basic" || selected === "premium";
 }
-
 bookingType.addEventListener("change", updateBookingType);
 updateBookingType();
 const BOOKING_START_DATE = "2026-10-20";
