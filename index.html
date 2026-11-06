@@ -56,41 +56,6 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
 .gcash-payment p {
     margin: 8px 0;
 }
-.upload-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.upload-field {
-  background: #fff0f6;
-  border: 1px solid #f2d8e4;
-  border-radius: 14px;
-  padding: 20px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.upload-field label {
-  font-weight: bold;
-}
-
-.upload-field input[type="file"] {
-  max-width: 100%;
-  width: 100%;
-  font-size: 13px;
-}
-
-@media (max-width: 600px) {
-  .upload-grid {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
 </head>
 <body>
@@ -178,32 +143,6 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
   <input type="file" id="paymentProof" accept="image/png,image/jpeg">
 </div>
 
-<div id="membershipProof" hidden>
-  <p><strong>Active Membership Verification</strong></p>
-  <p>Please upload clear photos or screenshots of both your Membership Card and Membership Booklet.</p>
-
-  <div class="upload-grid">
-    <div class="upload-field">
-      <label for="membershipCard">Membership Card</label>
-      <input type="file" id="membershipCard" accept="image/png,image/jpeg">
-    </div>
-
-    <div class="upload-field">
-      <label for="membershipBooklet">Membership Booklet</label>
-      <input type="file" id="membershipBooklet" accept="image/png,image/jpeg">
-    </div>
-  </div>
-</div>
-  <p><strong>Active membership verification</strong></p>
-  <p>Only members with an active, unexpired Basic or Premium membership are eligible for the session-fee exemption. Please upload clear photos or screenshots of both your Membership Card and Membership Booklet.</p>
-
-  <label for="membershipCard">Upload Membership Card</label><br>
-  <input type="file" id="membershipCard" accept="image/png,image/jpeg">
-
-  <label for="membershipBooklet">Upload Membership Booklet</label><br>
-  <input type="file" id="membershipBooklet" accept="image/png,image/jpeg">
-</div>
-
 <p class="muted">
   <strong>Payment Policy:</strong> All payments are non-refundable and non-transferable. If you cannot attend your reserved session, your payment cannot be refunded or transferred to another person or session.
 </p>
@@ -230,39 +169,18 @@ const availabilityMessage = document.getElementById("slotAvailability");
 const submitButton = form.querySelector('button[type="submit"]');
 const bookingType = document.getElementById("bookingType");
 const gcashPayment = document.getElementById("gcashPayment");
-const membershipProof = document.getElementById("membershipProof");
-
 const paymentProof = document.getElementById("paymentProof");
-const membershipCard = document.getElementById("membershipCard");
-const membershipBooklet = document.getElementById("membershipBooklet");
 
 function updateBookingType() {
-  const selected = bookingType.value;
-
-  if (selected === "regular") {
-    gcashPayment.hidden = false;
-    membershipProof.hidden = true;
-  } else if (selected === "basic" || selected === "premium") {
-    gcashPayment.hidden = true;
-    membershipProof.hidden = false;
-  } else {
-    gcashPayment.hidden = true;
-    membershipProof.hidden = true;
-  }
-
-  paymentProof.required = selected === "regular";
-  membershipCard.required = selected === "basic" || selected === "premium";
-  membershipBooklet.required = selected === "basic" || selected === "premium";
+  const isRegular = bookingType.value === "regular";
+  gcashPayment.hidden = !isRegular;
+  paymentProof.required = isRegular;
 }
+
 bookingType.addEventListener("change", updateBookingType);
 updateBookingType();
-const BOOKING_START_DATE = "2026-10-20";
-const SESSION_OPTIONS = [
-  { id: "1", label: "5:00–6:00 PM" },
-  { id: "2", label: "6:30–7:30 PM" },
-  { id: "3", label: "7:30–8:30 PM" }
-];
 
+const BOOKING_START_DATE = "2026-10-20";
 const closedDates = [
   "2026-11-01",
   "2026-11-02",
@@ -460,10 +378,8 @@ if (
     message.textContent = "Bookings begin October 20, 2026.";
     return;
   }
-const selectedBookingType = document.getElementById("bookingType").value;
-const paymentFile = document.getElementById("paymentProof").files[0];
-const cardFile = document.getElementById("membershipCard").files[0];
-const bookletFile = document.getElementById("membershipBooklet").files[0];
+const selectedBookingType = bookingType.value;
+const paymentFile = paymentProof.files[0];
 
 if (!selectedBookingType) {
   message.textContent = "Please select your booking type.";
@@ -475,13 +391,6 @@ if (selectedBookingType === "regular" && !paymentFile) {
   return;
 }
 
-if (
-  (selectedBookingType === "basic" || selectedBookingType === "premium") &&
-  (!cardFile || !bookletFile)
-) {
-  message.textContent = "Please upload both your Membership Card and Membership Booklet.";
-  return;
-}
   submitButton.disabled = true;
   submitButton.textContent = "Booking...";
   message.textContent = "Submitting your booking...";
@@ -511,7 +420,6 @@ if (
 
 const bookedSession = result.session_label ||
   fallbackSessions[Number(sessionId)] || "Selected session";
-      SESSION_OPTIONS.find(s => s.id === String(sessionId))?.label || "Selected session";
 
     message.innerHTML = `<div class="booking-success">
       <h3>🎉 Booking Confirmed!</h3>
@@ -537,9 +445,5 @@ function escapeHTML(value) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[character]));
 }
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, character => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[character]));
-}
+
 </script></body></html>
