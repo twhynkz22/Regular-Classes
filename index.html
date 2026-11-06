@@ -56,10 +56,57 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
 .gcash-payment p {
     margin: 8px 0;
 }
+
+.membership-upload-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 460px);
+  justify-content: center;
+  gap: 16px;
+  margin: 22px 0;
+  text-align: left;
+}
+.membership-upload-card {
+  background: #fff0f6;
+  border: 1px solid #f2d8e4;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.membership-upload-card label {
+  font-weight: bold;
+  text-align: center;
+}
+.membership-upload-card input[type="file"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .membership-upload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.brand-logo {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex: 0 0 64px;
+}
+.brand {
+  min-width: 0;
+}
+
 </style>
 </head>
 <body>
-<header><div class="wrap nav"><a class="brand" href="#home"><img src="stepbeat-logo.png" alt="StepBeat Studio Logo" style="width:65px;height:65px;object-fit:contain;"><span class="mark">✦</span><span>STEPBEAT STUDIO<small>MOVE • SWEAT • SMILE</small></span></a><nav><a href="#about">About</a><a href="#schedule">Schedule</a><a href="#rates">Membership</a><a href="#book">Book</a><a href="#contact">Contact</a></nav><a class="btn" href="#book">Join the Beat</a></div></header>
+<header><div class="wrap nav"><a class="brand" href="#home"><img class="brand-logo" src="stepbeat-logo.png" alt="StepBeat Studio Logo"><span>STEPBEAT STUDIO<small>MOVE • SWEAT • SMILE</small></span></a><nav><a href="#about">About</a><a href="#schedule">Schedule</a><a href="#rates">Membership</a><a href="#book">Book</a><a href="#contact">Contact</a></nav><a class="btn" href="#book">Join the Beat</a></div></header>
 <main>
 <section class="hero" id="home"><div class="wrap grid"><div><span class="eyebrow">Find your rhythm. Feel the energy.</span><h1>Move to your <em>beat.</em></h1><p class="lead">A fun, feel-good stepper dance fitness experience where every beat fuels movement and every step inspires wellness.</p><div class="actions"><a class="btn light" href="#schedule">View class schedule</a></div></div><div class="art" aria-hidden="true"><div class="circle">♫</div><div class="bubble b1">⚡ ENERGY UP</div><div class="bubble b2">♡ YOUR PACE, YOUR POWER</div></div></div></section>
 <section id="about"><div class="wrap"><div class="head"><span class="eyebrow">About StepBeat</span><h2>More than a workout.</h2><p>StepBeat Studio brings people together through music, movement, and a welcoming fitness community. Whether you are just starting or already love to move, there is a place for you here.</p></div><div class="cards"><article class="card"><span class="icon">🎵</span><h3>Move with the music</h3><p>Enjoy upbeat sessions that make movement feel like a celebration.</p></article><article class="card"><span class="icon">👟</span><h3>Step at your pace</h3><p>Build confidence one step at a time. Take breaks and modify movements as needed.</p></article><article class="card"><span class="icon">💗</span><h3>Find your community</h3><p>Share the energy, encourage one another, and make every session count.</p></article></div></div></section>
@@ -143,6 +190,24 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
   <input type="file" id="paymentProof" accept="image/png,image/jpeg">
 </div>
 
+<div id="membershipProof" hidden>
+  <h3>Active Membership Verification</h3>
+  <p class="muted">
+    Active Basic and Premium members must upload a clear photo or screenshot of their Membership Card.
+  </p>
+
+  <div class="membership-upload-grid">
+    <div class="membership-upload-card">
+      <label for="membershipCard">Upload Membership Card</label>
+      <input
+        type="file"
+        id="membershipCard"
+        accept="image/png,image/jpeg"
+      >
+    </div>
+  </div>
+</div>
+
 <p class="muted">
   <strong>Payment Policy:</strong> All payments are non-refundable and non-transferable. If you cannot attend your reserved session, your payment cannot be refunded or transferred to another person or session.
 </p>
@@ -169,12 +234,20 @@ const availabilityMessage = document.getElementById("slotAvailability");
 const submitButton = form.querySelector('button[type="submit"]');
 const bookingType = document.getElementById("bookingType");
 const gcashPayment = document.getElementById("gcashPayment");
+const membershipProof = document.getElementById("membershipProof");
 const paymentProof = document.getElementById("paymentProof");
+const membershipCard = document.getElementById("membershipCard");
 
 function updateBookingType() {
-  const isRegular = bookingType.value === "regular";
+  const selected = bookingType.value;
+  const isRegular = selected === "regular";
+  const isMember = selected === "basic" || selected === "premium";
+
   gcashPayment.hidden = !isRegular;
+  membershipProof.hidden = !isMember;
+
   paymentProof.required = isRegular;
+  membershipCard.required = isMember;
 }
 
 bookingType.addEventListener("change", updateBookingType);
@@ -380,6 +453,7 @@ if (
   }
 const selectedBookingType = bookingType.value;
 const paymentFile = paymentProof.files[0];
+const cardFile = membershipCard.files[0];
 
 if (!selectedBookingType) {
   message.textContent = "Please select your booking type.";
@@ -388,6 +462,14 @@ if (!selectedBookingType) {
 
 if (selectedBookingType === "regular" && !paymentFile) {
   message.textContent = "Please upload your GCash payment screenshot.";
+  return;
+}
+
+if (
+  (selectedBookingType === "basic" || selectedBookingType === "premium") &&
+  !cardFile
+) {
+  message.textContent = "Please upload your Membership Card.";
   return;
 }
 
