@@ -99,6 +99,43 @@ section{padding:65px 0}.head{text-align:center;max-width:680px;margin:0 auto 30p
         </select>
         <p class="muted" id="slotAvailability" aria-live="polite">Select a date to view session availability.</p>
         <br>
+          <label for="bookingType">Booking Type</label><br>
+<select id="bookingType" name="bookingType" required>
+  <option value="">Select booking type</option>
+  <option value="regular">Regular Booking - ₱180 per session</option>
+  <option value="basic">Active Basic Member</option>
+  <option value="premium">Active Premium Member</option>
+</select>
+<br><br>
+
+<div id="gcashPayment" hidden>
+  <div class="gcash-payment">
+    <h3>GCash Payment Details</h3>
+    <p><strong>Account Name:</strong> Maria Lourey May Narboneta</p>
+    <p><strong>GCash Number:</strong> 09107042354</p>
+    <p><strong>Session Fee:</strong> ₱180</p>
+    <p>Please upload your GCash payment screenshot below.</p>
+  </div>
+
+  <label for="paymentProof">Upload GCash Payment Screenshot</label><br>
+  <input type="file" id="paymentProof" accept="image/png,image/jpeg">
+</div>
+
+<div id="membershipProof" hidden>
+  <p><strong>Active membership verification</strong></p>
+  <p>Only members with an active, unexpired Basic or Premium membership are eligible for the session-fee exemption. Please upload clear photos or screenshots of both your Membership Card and Membership Booklet.</p>
+
+  <label for="membershipCard">Upload Membership Card</label><br>
+  <input type="file" id="membershipCard" accept="image/png,image/jpeg">
+
+  <label for="membershipBooklet">Upload Membership Booklet</label><br>
+  <input type="file" id="membershipBooklet" accept="image/png,image/jpeg">
+</div>
+
+<p class="muted">
+  <strong>Payment Policy:</strong> All payments are non-refundable and non-transferable. If you cannot attend your reserved session, your payment cannot be refunded or transferred to another person or session.
+</p>
+<br>
 
         <button class="btn" type="submit">Book Now</button>
         <p id="bookingMessage" aria-live="polite"></p>
@@ -327,7 +364,28 @@ if (
     message.textContent = "Bookings begin October 20, 2026.";
     return;
   }
+const selectedBookingType = document.getElementById("bookingType").value;
+const paymentFile = document.getElementById("paymentProof").files[0];
+const cardFile = document.getElementById("membershipCard").files[0];
+const bookletFile = document.getElementById("membershipBooklet").files[0];
 
+if (!selectedBookingType) {
+  message.textContent = "Please select your booking type.";
+  return;
+}
+
+if (selectedBookingType === "regular" && !paymentFile) {
+  message.textContent = "Please upload your GCash payment screenshot.";
+  return;
+}
+
+if (
+  (selectedBookingType === "basic" || selectedBookingType === "premium") &&
+  (!cardFile || !bookletFile)
+) {
+  message.textContent = "Please upload both your Membership Card and Membership Booklet.";
+  return;
+}
   submitButton.disabled = true;
   submitButton.textContent = "Booking...";
   message.textContent = "Submitting your booking...";
@@ -366,6 +424,11 @@ if (
   }
 });
 
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[character]));
+}
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
