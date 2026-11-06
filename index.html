@@ -314,11 +314,7 @@ async function loadSessionsForDate() {
     }
   });
 }
-sessions.forEach(session => {
-  if (String(session.session_id) === "3") {
-    session.label = "7:30-8:30 PM";
-  }
-});
+
     setSessionOptions(sessions);
 
     availabilityMessage.textContent =
@@ -423,7 +419,19 @@ if (
     });
 
     const bookedDate = result.class_date || classDate;
-    const bookedSession = result.session_label ||
+    const fallbackSessions = classDate < "2026-11-10"
+  ? {
+      1: "5:00–6:00 PM",
+      2: "6:30–7:30 PM",
+      3: "8:00–9:00 PM"
+    }
+  : {
+      1: "6:00–7:00 PM",
+      2: "7:00–8:00 PM"
+    };
+
+const bookedSession = result.session_label ||
+  fallbackSessions[Number(sessionId)] || "Selected session";
       SESSION_OPTIONS.find(s => s.id === String(sessionId))?.label || "Selected session";
 
     message.innerHTML = `<div class="booking-success">
